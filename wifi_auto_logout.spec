@@ -37,7 +37,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='yellow_people.ico',
+    icon=['yellow_people.ico'],
 )
 coll = COLLECT(
     exe,
