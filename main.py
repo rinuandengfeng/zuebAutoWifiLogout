@@ -9,6 +9,11 @@ from utils.get_image_code import get_verifycode_code
 class WifiLogout(object):
 
     def __init__(self, username, password):
+        if not username  or not password:
+            logger.error("用户名或密码为空...")
+            info = input("输入任意键退出程序...")
+            raise Exception("用户名或密码为空...")
+            
         self.username = str(username)
         self.password = str(password)
         try:
@@ -45,9 +50,12 @@ class WifiLogout(object):
 
         # 获取验证码图片
         logger.info("获取验证码图片...")
-        image_content = self.session.get(url=verifycode_image_url, headers=headers, timeout=(6, 1)).content
         try:
-            with open('./verify_code_image.png', 'wb') as f:
+            image_content = self.session.get(url=verifycode_image_url, headers=headers, timeout=(6, 1)).content
+        except Exception as e:
+            logger.error("获取验证码失败",e)
+        try:
+            with open('./verify_image.png', 'wb') as f:
                 f.write(image_content)
         except Exception as e:
             logger.error("验证码图片保存失败!",e)
@@ -94,11 +102,14 @@ class WifiLogout(object):
         try:
             info = tree.xpath('//*[@id="w5-success-0"]/text()')
             logger.info(info)
-            if info == "['\n', '\n\n正在逐个下线，请稍等...\n\n']":
+            if info:
                 logger.info("下线成功")
             else:
                 logger.info("下线失败,请重新执行该程序o(╥﹏╥)o")
         except Exception as e:
             logger.error("下线失败",e)
+
+
+    
 
 

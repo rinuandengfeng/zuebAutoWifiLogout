@@ -20,7 +20,7 @@ def set_log():
         os.makedirs(path)
     logger.setLevel(logging.INFO)
 
-    formatter = logging.Formatter('%(asctime)s %(levelname)s :%(message)s')
+    formatter = logging.Formatter('%(asctime)s %(levelname)s : %(message)s')
     #创建终端处理器
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
