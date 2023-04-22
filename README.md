@@ -7,10 +7,10 @@
 该项目仅供为学习使用，若不正当的使用，产生的后果一概与本人无关。
 
 ## :muscle: 模块
-![python](https://img.shields.io/badge/python-3.7.4-blue)
-![requests](https://img.shields.io/badge/requests-2.25.1-blue)
-![ddddocr](https://img.shields.io/badge/ddddocr-0.0.9-blue)
-![pyinstaller](https://img.shields.io/badge/pyinstaller-4.3-blue)
+![python](https://img.shields.io/badge/python-3.7.13-blue)
+![requests](https://img.shields.io/badge/requests-2.28.1-blue)
+![ddddocr](https://img.shields.io/badge/ddddocr-1.4.7-blue)
+![pyinstaller](https://img.shields.io/badge/pyinstaller-5.6.2-blue)
 
 
 
