@@ -1,30 +1,34 @@
 # zuebWifiLogout
 郑州经贸学院校园网自动下线脚本
 
-## 声明
+## :star: 项目介绍
+该项目是一个自动下线校园网的脚本，使用python编写，使用`requests`库进行网络请求，使用`xpath`进行数据解析，使用`ddddocr`包进行验证码识别，使用`pyinstaller`进行打包。
+## :warning: 声明
 该项目仅供为学习使用，若不正当的使用，产生的后果一概与本人无关。
 
+## :muscle: 模块
+![python](https://img.shields.io/badge/python-3.7.4-blue)
+![requests](https://img.shields.io/badge/requests-2.25.1-blue)
+![ddddocr](https://img.shields.io/badge/ddddocr-0.0.9-blue)
+![pyinstaller](https://img.shields.io/badge/pyinstaller-4.3-blue)
 
-## 使用的模块
-- requests
-- ddddocr
-- pyinsterall
 
-## 使用教程
+
+## :rocket: 使用方法
 1. 将代码克隆到本地
     `git clone `
 2. 打开`dist`文件夹，找到`wifi_auto_logout.exe`文件
-![img_1.png](img_1.png)
+![img_1.png](/img/img_1.png)
 3. 直接运行`wifi_auto_logout.exe`文件，在弹出的终端页面中按照提示输入自己的学号和密码就可以了。
 运行结束之后会自动退出终端，目前暂不知支持退出已连接校园网的设备后自动登录。
 
 4. 可以将`dist`文件夹，中的`wifi_auto_logout.exe`发送桌面快捷方式，这样可以方便我们操作。
 
 
-## 实现详细流程:
+## :bulb: 代码解析
 1.获取`_csrf-8800`  
 首先使用`get`请求`https://10.10.10.3:8800/`页面获取该页面中隐藏的`_csrf-8800`,这个值在登录的时候需要用到。  
-![img.png](img.png)  
+![img.png](/img/img.png)  
 
 2.验证码识别    
 这里我使用的是`ddddocr`包，这个包在打包的时候有一个大坑o(╥﹏╥)o  
@@ -68,7 +72,7 @@
 ```
 
 
-## 总结:
+## :bug: BUG
 写这个爬虫时遇到的两个问题
 1. 获取隐藏值时，自己的解决问题，当时自己只会`requests`库的基本请求，根据自己的想法，内心只有一句话
 模仿人是怎么请求，最后经过分析解决了该问题（这个问题还好，手动狗头）。  

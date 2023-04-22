@@ -1,2 +1,5 @@
+*.js linguist-language=python
+*.css linguist-language=python
+*.html linguist-language=python
 *.onnx filter=lfs diff=lfs merge=lfs -text
 *.exe filter=lfs diff=lfs merge=lfs -text
