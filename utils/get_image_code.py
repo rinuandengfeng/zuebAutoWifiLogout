@@ -1,4 +1,5 @@
 from logs import logger
+import time
 import ddddocr
 
 
