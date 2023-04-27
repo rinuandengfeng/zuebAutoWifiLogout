@@ -5,7 +5,7 @@ import requests
 from logs import logger
 
 from utils.get_image_code import get_verifycode_code
-
+from utils.send_requests import get_response,post_requests,get_image
 class WifiLogout(object):
 
     def __init__(self, username, password):
@@ -16,62 +16,52 @@ class WifiLogout(object):
             
         self.username = str(username)
         self.password = str(password)
-        try:
-            self.session = requests.Session()
-        except Exception as e:
-            logger.error("没有连接网络,请连接网络之后在试...")
-        self.crsf = self.index()
+
+        self.session = None
+        self.crsf = None
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)\
                              Chrome/106.0.0.0 Safari/537.36",
             'Content-Type': 'application/x-www-form-urlencoded',
         }
-        self.session.trust_env = False
 
+        # self.session.trust_env = False
+
+    def start(self):
+        self.session = self.get_session()
+        self.index()
+        self.login_index()
+        self.logout_wifi()
+
+    
    
 
     # 进入首页
     def index(self):
-
+        """
+        进入登录的首页，获取csrf-8800的并赋值给self.crsf
+        获取验证码图片
+        """
         url = 'https://10.10.10.3:8800'
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)\
-                                     Chrome/106.0.0.0 Safari/537.36",
-        }
 
-        responses = self.session.get(url=url, headers=headers, timeout=(6, 1), verify=False)
+        responses = get_response(url=url, headers=self.headers, session=self.session)
 
         # 获取csrf-8800的value值
         tree = etree.HTML(responses.text)
         csrf = tree.xpath('//input [@name="_csrf-8800"]/@value')[0]
+        self.crsf = csrf
+
+        # return responses
         # 获取图片的地址
         image_suffix = tree.xpath('//img [@id="loginform-verifycode-image"]/@src')[0]
         verifycode_image_url = 'https://10.10.10.3:8800' + str(image_suffix)
 
         # 获取验证码图片
         logger.info("获取验证码图片...")
-        try:
-            image_content = self.session.get(url=verifycode_image_url, headers=headers, timeout=(6, 1)).content
-        except Exception as e:
-            logger.error("获取验证码失败",e)
-        try:
-            with open('./verify_image.png', 'wb') as f:
-                f.write(image_content)
-        except Exception as e:
-            logger.error("验证码图片保存失败!",e)
-        return csrf
+        get_image(url=verifycode_image_url, headers=self.headers, session=self.session)
+        
 
-    # 验证码校验
-    def verify_code(self):
-        verify_code = get_verifycode_code()
-        if len(verify_code) == 4:
-            return verify_code
-        else:
-            # 验证码不是四位重新加载页面
-            logger.info("验证码校验错误重新加载页面...")
-            self.crsf = self.index()
-            verify_code = get_verifycode_code()
-            return verify_code
+
 
     # 登录下线网站函数
     def login_index(self):
@@ -84,10 +74,11 @@ class WifiLogout(object):
             'login-button': '',
         }
         logger.info("登录中...")
-        respones = self.session.post(url=url, headers=self.headers, data=data, timeout=(6, 1), verify=False)
+        respones = post_requests(url=url, headers=self.headers, session=self.session, data=data)
         logger.info("登录成功")
 
 
+    def logout_wifi(self):
         self.headers['Content-Type'] = 'application/x-www-form-urlencoded'
         self.headers['referer'] = 'https://10.10.10.3:8800/home'
         ## 执行下线操作
@@ -95,8 +86,7 @@ class WifiLogout(object):
             '_csrf-8800': self.crsf,
         }
         logout_url = 'https://10.10.10.3:8800/home/onekey'
-        logout_response = self.session.post(url=logout_url, headers=self.headers, data=logout_data, timeout=(6, 1),
-                                            verify=False)
+        logout_response = post_requests(url=logout_url, headers=self.headers, session=self.session,data=logout_data)
         tree = etree.HTML(logout_response.text)
 
         try:
@@ -110,3 +100,31 @@ class WifiLogout(object):
             logger.error("下线失败",e)
 
 
+    # 验证码校验
+    def verify_code(self):
+        """
+        对验证码进行校验，提高验证码的正确率
+        """
+        verify_code = get_verifycode_code()
+        if len(verify_code) == 4:
+            return verify_code
+        else:
+            # 验证码不是四位重新加载页面
+            logger.info("验证码校验错误重新加载页面...")
+            self.crsf = self.index()
+            verify_code = get_verifycode_code()
+            return verify_code
+
+
+    def get_session(self):
+        """
+        获取session
+        :return:session
+        """
+        try:
+            session = requests.session()
+        except Exception as e:
+            logger.error("获取session失败",e)
+            wating_input = input("输入任意键退出程序...")
+            exit()
+        return session

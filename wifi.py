@@ -12,7 +12,7 @@ password = os.getenv('password')
 
 user = WifiLogout(username=username, password=password)
 
-user.login_index()
+user.start()
 a = input("请点×关闭窗口")
 
 
